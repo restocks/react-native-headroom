@@ -31,20 +31,35 @@ export default class Headroom extends Component {
       return;
     }
 
+    // If hidden and offset is less than minscroll, stop
     if (!this.state.visible && currentOffset < this.props.minScroll) {
       return;
     }
 
+    // If visible and offset is less than minscroll, hide and stop
     if (this.state.visible && currentOffset < this.props.minScroll) {
       this._toggleHeader();
       this.offset = currentOffset;
       return;
     }
 
-    if (
+    if (this.props.keepWhenScrollDown === true) {
+      // If hidden and greater than minscroll, show
+      // or
+      // If visible and less than minscroll, hide
+      if (
+        (!this.state.visible && currentOffset > this.props.minScroll) ||
+        (this.state.visible && currentOffset < this.props.minScroll)
+      ) {
+        this._toggleHeader();
+      }
+    } else if (
       (this.state.visible && currentOffset > this.offset) ||
       (!this.state.visible && currentOffset < this.offset)
     ) {
+      // If visible and current scroll is greater than previous, hide
+      // or
+      // If not visible and current scroll is less than previous, show.
       this._toggleHeader();
     }
     this.offset = currentOffset;
